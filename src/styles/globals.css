@@ -450,6 +450,8 @@ html.has-custom-cursor select {
   --menu-chip: rgba(28, 28, 30, 0.06);
   --menu-divider: rgba(28, 28, 30, 0.08);
   --menu-accent: #FF7A3D;
+  /* Opaque surface for the project sheet on phones, where glass blur is costly and see-through */
+  --sheet-solid: #FBFBFD;
 }
 [data-theme="night"] {
   --menu-scrim: rgba(10, 10, 12, 0.55);
@@ -458,6 +460,7 @@ html.has-custom-cursor select {
   --menu-chip: rgba(255, 255, 255, 0.08);
   --menu-divider: rgba(255, 255, 255, 0.08);
   --menu-accent: #9FD9C1;
+  --sheet-solid: #18181C;
 }
 
 .menu-backdrop {
@@ -1054,6 +1057,28 @@ html.has-custom-cursor select {
   @media (min-width: 640px) {
     .sheet {
       border-radius: 32px;
+    }
+  }
+  /* Phones: a solid sheet over a dimmed page, like an iOS modal sheet */
+  @media (max-width: 639px) {
+    .sheet-backdrop {
+      background: rgba(10, 10, 12, 0.5);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .sheet {
+      /* Reach the bottom edge even for short case studies */
+      min-height: calc(100svh - 12px);
+      background: var(--sheet-solid);
+      border-bottom: 0;
+      box-shadow: 0 -12px 40px -12px rgba(0, 0, 0, 0.35);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .sheet-bar {
+      background: var(--sheet-solid);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
   }
 
