@@ -9,7 +9,7 @@ export const content: PortfolioContent = {
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
     availableForWork: true,
     statusText: "Available for AI & Full Stack Roles",
-    email: "ujjwalarote@gmail.com",
+    email: "ujjwalarote69@gmail.com",
     resumeUrl: "#resume"
   },
 
@@ -350,7 +350,7 @@ export const content: PortfolioContent = {
   socials: [
     { platform: "GitHub", handle: "@UjjwalArote69", url: "https://github.com/UjjwalArote69", icon: "github" },
     { platform: "LinkedIn", handle: "ujjwal-arote", url: "https://linkedin.com", icon: "linkedin" },
-    { platform: "X / Twitter", handle: "@ujjwalarote", url: "https://twitter.com", icon: "twitter" },
+    { platform: "X", handle: "@UjjwalArote", url: "https://x.com/UjjwalArote", icon: "twitter" },
     { platform: "Portfolio", handle: "ujjwal.dev", url: "#", icon: "dribbble" }
   ],
 
