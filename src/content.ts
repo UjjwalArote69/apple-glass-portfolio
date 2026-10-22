@@ -1,4 +1,5 @@
 import type { PortfolioContent } from './types/portfolio';
+import avatar from './assets/ujjwalarote-avatar.jpg';
 
 export const content: PortfolioContent = {
   author: {
@@ -6,7 +7,7 @@ export const content: PortfolioContent = {
     role: "Full Stack AI Developer",
     tagline: "Engineering distributed systems, intelligent AI agents & calm tactile interfaces.",
     location: "Mumbai, India",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    avatar,
     availableForWork: true,
     statusText: "Available for AI & Full Stack Roles",
     email: "ujjwalarote69@gmail.com",
