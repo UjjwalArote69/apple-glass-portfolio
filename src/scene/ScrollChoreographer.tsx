@@ -22,18 +22,19 @@ export function ScrollChoreographer({ pointer, theme, isMobile }: ScrollChoreogr
   // Target values animated by GSAP
   const targets = useRef({
     x: isMobile ? 0 : 2.1,
-    y: isMobile ? 1.6 : 0.0,
-    z: isMobile ? -0.8 : 0.0,
-    scale: isMobile ? 1.1 : 1.5,
+    y: isMobile ? 1.55 : 0.0,
+    z: isMobile ? -0.6 : 0.0,
+    scale: isMobile ? 1.0 : 1.5,
     warmth: 0,
   });
 
   useEffect(() => {
     // Initial hero target based on screen width
+    // Phones and tablets: the orb sits high and a little smaller so the hero text below stays clear
     targets.current.x = isMobile ? 0 : 2.1;
-    targets.current.y = isMobile ? 1.4 : 0.0;
+    targets.current.y = isMobile ? 1.55 : 0.0;
     targets.current.z = isMobile ? -0.6 : 0.0;
-    targets.current.scale = isMobile ? 1.15 : 1.5;
+    targets.current.scale = isMobile ? 1.0 : 1.5;
     targets.current.warmth = 0;
 
     const ctx = gsap.context(() => {
@@ -49,9 +50,9 @@ export function ScrollChoreographer({ pointer, theme, isMobile }: ScrollChoreogr
           const heroX = isMobile ? 0 : 2.1;
           const aboutX = isMobile ? 0 : -2.2;
           targets.current.x = THREE.MathUtils.lerp(heroX, aboutX, p);
-          targets.current.y = THREE.MathUtils.lerp(isMobile ? 1.4 : 0.0, isMobile ? 0.6 : -0.2, p);
+          targets.current.y = THREE.MathUtils.lerp(isMobile ? 1.55 : 0.0, isMobile ? 0.6 : -0.2, p);
           targets.current.z = THREE.MathUtils.lerp(isMobile ? -0.6 : 0.0, -0.6, p);
-          targets.current.scale = THREE.MathUtils.lerp(isMobile ? 1.15 : 1.5, isMobile ? 0.9 : 1.1, p);
+          targets.current.scale = THREE.MathUtils.lerp(isMobile ? 1.0 : 1.5, isMobile ? 0.9 : 1.1, p);
           targets.current.warmth = THREE.MathUtils.lerp(0, 0.85, p);
         }
       });
@@ -110,7 +111,7 @@ export function ScrollChoreographer({ pointer, theme, isMobile }: ScrollChoreogr
   });
 
   return (
-    <group ref={groupRef} position={[isMobile ? 0 : 2.1, isMobile ? 1.4 : 0.0, 0]}>
+    <group ref={groupRef} position={[isMobile ? 0 : 2.1, isMobile ? 1.55 : 0.0, 0]}>
       <IridescentOrb
         pointer={pointer}
         theme={theme}

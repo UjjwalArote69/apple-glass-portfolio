@@ -4,7 +4,7 @@ export const content: PortfolioContent = {
   author: {
     name: "Ujjwal Sitaram Arote",
     role: "Full Stack AI Developer",
-    tagline: "Engineering distributed systems, intelligent AI agents & calm tactile interfaces.",
+    tagline: "I build full-stack web apps with AI at the core, from architecture simulators to conversational tutors.",
     location: "Mumbai, India",
     availableForWork: true,
     statusText: "Available for AI & Full Stack Roles",

@@ -1510,3 +1510,70 @@ html.has-custom-cursor select {
     border: 1px solid rgba(16, 185, 129, 0.2);
   }
 }
+
+/* ===== Hero ===== */
+@layer components {
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+
+  /* Fluid size: two balanced lines per phrase on phones, one line each from tablets up,
+     and capped by height so a sideways phone still shows the buttons */
+  .hero-title {
+    margin-top: 1.25rem;
+    font-size: clamp(2.25rem, min(10.5vw, 11vh), 4.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .hero-lead {
+    display: block;
+    margin-top: 0.3em;
+    font-weight: 600;
+    /* Black by request in daylight; the night background needs the light text colour */
+    color: #000;
+  }
+  [data-theme="night"] .hero-lead {
+    color: var(--text);
+  }
+  /* The night orb and gradient are bright behind the text, so the secondary greys get lifted */
+  [data-theme="night"] .hero-label {
+    color: rgba(245, 245, 247, 0.72);
+  }
+  [data-theme="night"] .hero-intro {
+    color: rgba(245, 245, 247, 0.82);
+  }
+
+  .hero-intro {
+    margin-top: 1.25rem;
+    max-width: 34rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-2);
+    text-wrap: pretty;
+  }
+
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  @media (min-width: 640px) {
+    .hero-intro {
+      font-size: 1.125rem;
+    }
+  }
+}
