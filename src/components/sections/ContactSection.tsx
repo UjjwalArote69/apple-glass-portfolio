@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Copy, Check } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Copy, Check, Loader2 } from 'lucide-react';
 import { content } from '../../content';
 import { GlassCard } from '../ui/GlassCard';
 import { SocialIcon } from '../ui/BrandIcons';
@@ -10,13 +10,16 @@ interface ContactSectionProps {
   onShowToast: (msg: string) => void;
 }
 
+const EMPTY_FORM = { name: '', email: '', message: '' };
+
 export function ContactSection({ onShowToast }: ContactSectionProps) {
   const { author, socials } = content;
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const isInView = useInView(headlineRef, { once: true, margin: '-60px' });
 
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [opened, setOpened] = useState(false);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorText, setErrorText] = useState('');
   const [copied, setCopied] = useState(false);
 
   // Placeholder entries without a real URL aren't worth a click
@@ -33,13 +36,27 @@ export function ContactSection({ onShowToast }: ContactSectionProps) {
     }
   };
 
-  // No backend: hand the message to the visitor's own email app, already addressed and filled in
-  const handleSubmit = (e: React.FormEvent) => {
+  // Sent through the api/contact serverless function, which emails it with Resend
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const subject = `Hello from ${form.name}`;
-    const body = `${form.message}\n\n${form.name}\n${form.email}`;
-    window.location.href = `mailto:${author.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
+    if (status === 'sending') return;
+    setStatus('sending');
+
+    const company = new FormData(e.currentTarget).get('company') ?? '';
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...form, company }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Your message couldn't be sent right now.");
+      setForm(EMPTY_FORM);
+      setStatus('sent');
+    } catch (error) {
+      setErrorText(error instanceof Error && error.message !== 'Failed to fetch' ? error.message : "Your message couldn't be sent right now.");
+      setStatus('error');
+    }
   };
 
   return (
@@ -155,23 +172,45 @@ export function ContactSection({ onShowToast }: ContactSectionProps) {
               />
             </label>
 
+            {/* Honeypot for bots: hidden from people and screen readers */}
+            <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+
             <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
-              <button type="submit" className="about-cta group justify-center shrink-0 whitespace-nowrap" data-cursor="Send">
-                Send message
-                <ArrowRight className="w-4 h-4 stroke-[1.75] transition-transform duration-300 group-hover:translate-x-1" />
+              <button
+                type="submit"
+                disabled={status === 'sending'}
+                className="about-cta group justify-center shrink-0 whitespace-nowrap disabled:opacity-60 disabled:cursor-wait"
+                data-cursor="Send"
+              >
+                {status === 'sending' ? (
+                  <>
+                    Sending
+                    <Loader2 className="w-4 h-4 stroke-[1.75] animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    Send message
+                    <ArrowRight className="w-4 h-4 stroke-[1.75] transition-transform duration-300 group-hover:translate-x-1" />
+                  </>
+                )}
               </button>
-              <p className="text-[13px] text-[var(--text-3)]">Opens your email app with this message ready to send.</p>
+              <p className="text-[13px] text-[var(--text-3)]">Goes straight to my inbox.</p>
             </div>
 
-            {opened && (
-              <p role="status" className="contact-note">
-                Your email app should have opened with the message. If it didn&apos;t, write to{' '}
-                <a href={`mailto:${author.email}`} className="about-link">
-                  {author.email}
-                </a>
-                .
-              </p>
-            )}
+            <div role="status" aria-live="polite">
+              {status === 'sent' && (
+                <p className="contact-note">Thanks, your message is on its way. I&apos;ll reply to the email you gave.</p>
+              )}
+              {status === 'error' && (
+                <p className="contact-note contact-note-error">
+                  {errorText} You can also write to me directly at{' '}
+                  <a href={`mailto:${author.email}`} className="about-link">
+                    {author.email}
+                  </a>
+                  .
+                </p>
+              )}
+            </div>
           </form>
         </div>
       </GlassCard>
