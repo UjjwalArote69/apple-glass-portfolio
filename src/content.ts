@@ -17,12 +17,13 @@ export const content: PortfolioContent = {
     lead: "I'm Ujjwal, a computer engineering student in Mumbai who builds full-stack web apps, often with AI at the core.",
     paragraphs: [
       "My own projects sit where AI, systems and interfaces meet. [Kendall](https://kendall-web.vercel.app/) lets you sketch an architecture and send simulated traffic through it to see where it breaks. [SchemaStudio](https://schema-studio.vercel.app/) turns database design into a visual canvas that writes the SQL for you. [Yapster](http://yapster-2-0.vercel.app/welcome) is a German tutor you can hold a conversation with.",
-      "Since 2024 I've also been building the web side of MEKA Group: five sites, from the group's corporate home at [meka.com](https://meka.com/) to its maritime, dredging, consulting and safety-tech businesses.",
-      "I graduate in 2027 and I'm open to AI and full-stack roles."
+      "From March to May 2026 I interned at MEKA Group, building the web side of the group: five sites, from its corporate home at [meka.com](https://meka.com/) to its maritime, dredging, consulting and safety-tech businesses.",
+      "I finished my diploma in 2026 and I'm now doing a BE in Computer Engineering, graduating in 2029. I'm open to AI and full-stack roles."
     ],
     facts: [
-      { label: "Studying", value: "BE Computer Engineering", detail: "Atharva College of Engineering, 2023 to 2027" },
-      { label: "Working", value: "Web Developer Intern", detail: "MEKA Group, since 2024" },
+      { label: "Studying", value: "BE Computer Engineering", detail: "Atharva College of Engineering, 2026 to 2029" },
+      { label: "Before that", value: "Diploma", detail: "2023 to 2026" },
+      { label: "Interned", value: "Web Developer Intern", detail: "MEKA Group, March to May 2026" },
       { label: "Usually in", value: "React, TypeScript, Node.js", detail: "Python for the AI side" }
     ]
   },
@@ -158,7 +159,7 @@ export const content: PortfolioContent = {
       title: "MEKA Group Corporate Portal",
       oneLiner: "Flagship digital experience for 45+ years of marine engineering, dredging, and port infrastructure.",
       role: "Web Developer Intern @ MEKA Group",
-      year: "2024",
+      year: "2026",
       tags: ["Enterprise Web", "Corporate UI", "Marine Infrastructure", "Performance"],
       image: "/projects/meka-group.jpg",
       accentColor: "#0EA5E9",
@@ -180,7 +181,7 @@ export const content: PortfolioContent = {
       title: "Amma Lines Marine Infrastructure",
       oneLiner: "Showcase portal for MEKA Group's flagship marine construction and deepwater dredging arm.",
       role: "Web Developer Intern @ MEKA Group",
-      year: "2024",
+      year: "2026",
       tags: ["Marine Engineering", "Infrastructure", "Multilingual UI", "Animations"],
       image: "/projects/amma-lines.jpg",
       accentColor: "#06B6D4",
@@ -202,7 +203,7 @@ export const content: PortfolioContent = {
       title: "MEKA Dredging Operations",
       oneLiner: "Technical marine dredging portal featuring fleet specifications, coastal boundary depth modeling, and harbor reclamation.",
       role: "Web Developer Intern @ MEKA Group",
-      year: "2024",
+      year: "2026",
       tags: ["Marine Dredging", "Hydrographic Tech", "Fleet Showcase", "Interactive UI"],
       image: "/projects/meka-dredging.jpg",
       accentColor: "#3B82F6",
@@ -224,7 +225,7 @@ export const content: PortfolioContent = {
       title: "MEKA Consultants",
       oneLiner: "Strategic management, engineering consulting, and infrastructure advisory digital hub.",
       role: "Web Developer Intern @ MEKA Group",
-      year: "2024",
+      year: "2026",
       tags: ["Strategic Consulting", "Engineering Advisory", "Corporate UI", "Tailwind"],
       image: "/projects/meka-consultants.jpg",
       accentColor: "#6366F1",
@@ -246,7 +247,7 @@ export const content: PortfolioContent = {
       title: "Nari Astra Self-Defense & Safety",
       oneLiner: "Modern web experience showcasing empowerment and premium personal self-defense technology for women.",
       role: "Web Developer Intern @ MEKA Group",
-      year: "2024",
+      year: "2026",
       tags: ["Product Showcase", "Safety Tech", "E-Commerce UI", "React"],
       image: "/projects/nari-astra.jpg",
       accentColor: "#EC4899",
@@ -305,13 +306,26 @@ export const content: PortfolioContent = {
 
   experience: [
     {
+      id: "exp-be",
+      kind: "Education",
+      company: "Atharva College of Engineering",
+      role: "BE in Computer Engineering",
+      period: "2026 — 2029",
+      current: true,
+      location: "Mumbai, India",
+      description: "Bachelor of Engineering in Computer Engineering, graduating in 2029.",
+      highlights: [
+        "Coursework in distributed systems, operating systems, databases and artificial intelligence."
+      ]
+    },
+    {
       id: "exp-1",
       kind: "Work",
       company: "MEKA Group",
       role: "Full Stack & Web Developer Intern",
-      period: "2024 — Present",
+      period: "Mar 2026 — May 2026",
       location: "Mumbai, India",
-      description: "I build and ship the group's websites, from the corporate site at meka.com to the sites for its maritime, dredging, consulting and safety-tech businesses.",
+      description: "I built and shipped the group's websites, from the corporate site at meka.com to the sites for its maritime, dredging, consulting and safety-tech businesses.",
       highlights: [
         "Built the front end of five sites and handled their deployment.",
         "Designed Nari Astra's product site for a personal-safety brand, with interactive sections and motion."
@@ -334,16 +348,14 @@ export const content: PortfolioContent = {
       projects: ["kendall", "schema-studio", "yapster", "whispr"]
     },
     {
-      id: "exp-2",
+      id: "exp-diploma",
       kind: "Education",
-      company: "Atharva College of Engineering",
-      role: "BE in Computer Engineering",
-      period: "2023 — 2027",
+      company: "Diploma",
+      role: "Diploma in Engineering",
+      period: "2023 — 2026",
       location: "Mumbai, India",
-      description: "Bachelor of Engineering in Computer Engineering, graduating in 2027.",
-      highlights: [
-        "Coursework in distributed systems, operating systems, databases and artificial intelligence."
-      ]
+      description: "Three-year diploma, completed in 2026 before starting the BE.",
+      highlights: []
     }
   ],
 
@@ -358,7 +370,7 @@ export const content: PortfolioContent = {
     { title: "About", description: "Who I am, what I study and how I build", href: "#about", icon: "user" },
     { title: "Work", description: "Shipped AI, systems and enterprise projects", href: "#work", icon: "layers", badge: "9 Projects" },
     { title: "Skills", description: "Languages, frameworks and tools I use daily", href: "#skills", icon: "cpu" },
-    { title: "Experience", description: "Internships, freelance and independent work", href: "#experience", icon: "briefcase" },
+    { title: "Experience", description: "Education, internship and independent work", href: "#experience", icon: "briefcase" },
     { title: "Contact", description: "Open to AI and full-stack roles", href: "#contact", icon: "mail", badge: "Open" }
   ]
 };

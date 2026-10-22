@@ -34,6 +34,8 @@ export interface ExperienceItem {
   company: string;
   role: string;
   period: string;
+  // Marks an ongoing entry whose period has an end date rather than "Present"
+  current?: boolean;
   location: string;
   description: string;
   highlights: string[];

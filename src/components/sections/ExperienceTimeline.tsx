@@ -13,7 +13,8 @@ const EASE = [0.32, 0.72, 0, 1] as const;
 
 export function ExperienceTimeline({ onSelectProject }: ExperienceTimelineProps) {
   const { experience } = content;
-  const startYear = Math.min(...experience.map((item) => parseInt(item.period, 10)));
+  // Periods can start with a month ("Mar 2026"), so pick out the first four-digit year
+  const startYear = Math.min(...experience.map((item) => Number(item.period.match(/\d{4}/)?.[0] ?? Infinity)));
 
   return (
     <section id="experience" className="px-4 sm:px-8 py-24 max-w-7xl mx-auto relative z-10">
@@ -57,7 +58,7 @@ function TimelineEntry({ item, onSelectProject }: TimelineEntryProps) {
   const related = (item.projects ?? [])
     .map((id) => content.projects.find((project) => project.id === id))
     .filter((project): project is Project => Boolean(project));
-  const current = /present/i.test(item.period);
+  const current = item.current ?? /present/i.test(item.period);
 
   return (
     <li ref={ref} className="tl-entry" data-reached={reached} data-current={current}>
