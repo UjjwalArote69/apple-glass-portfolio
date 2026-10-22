@@ -1,0 +1,443 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: #F4F3F1;
+    --bg-glow-1: #FFC9A3;
+    --bg-glow-2: #C9C3FA;
+    --bg-glow-3: #A9C4FF;
+    --text: #1C1C1E;
+    --text-2: #6E6E73;
+    --text-3: #A1A1A6;
+    --glass-bg: rgba(255, 255, 255, 0.58);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.38);
+    --glass-border: rgba(255, 255, 255, 0.82);
+    --glass-border-b: rgba(255, 255, 255, 0.28);
+    --glass-shadow: 0 24px 60px -20px rgba(60, 40, 30, 0.14);
+    --glass-blur: 28px;
+    --glass-saturate: 180%;
+    --radius-card: 32px;
+    --radius-pill: 999px;
+    --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.05) 60%);
+    --accent-glow: rgba(255, 175, 130, 0.4);
+    
+    --tile-magenta: #E23A8C;
+    --tile-rose: #F2A3C4;
+    --tile-mint: #9FD9C1;
+    --tile-cobalt: #3E5BFF;
+    --tile-tangerine: #FF7A3D;
+  }
+
+  [data-theme="night"] {
+    --bg: #0A0A0C;
+    --bg-glow-1: #E23A8C;
+    --bg-glow-2: #3E5BFF;
+    --bg-glow-3: #9FD9C1;
+    --text: #F5F5F7;
+    --text-2: #A1A1A6;
+    --text-3: #6E6E73;
+    --glass-bg: rgba(26, 26, 30, 0.52);
+    --glass-bg-subtle: rgba(26, 26, 30, 0.32);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-border-b: rgba(255, 255, 255, 0.04);
+    --glass-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.01) 60%);
+    --accent-glow: rgba(62, 91, 255, 0.35);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    scroll-behavior: auto; /* Handled smoothly by Lenis */
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom selection */
+  ::selection {
+    background: rgba(255, 175, 130, 0.35);
+    color: inherit;
+  }
+  [data-theme="night"] ::selection {
+    background: rgba(159, 217, 193, 0.35);
+  }
+}
+
+/* Typography Helpers */
+.font-sans {
+  font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.font-serif {
+  font-family: "Instrument Serif", Georgia, serif;
+}
+.font-doto {
+  font-family: "Doto", monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Tactile Apple Glass Recipe */
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid transparent;
+  border-image: linear-gradient(180deg, var(--glass-border) 0%, var(--glass-border-b) 100%) 1;
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  position: relative;
+}
+
+/* Glass with border radius (since border-image doesn't play well with border-radius in older CSS engines) */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  border-radius: var(--radius-card);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.45s var(--ease-apple), box-shadow 0.45s var(--ease-apple), border-color 0.45s var(--ease-apple);
+}
+
+/* Tactile micro-noise texture overlay (2.5% opacity) */
+.glass-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-pill {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 8px 24px -8px rgba(0,0,0,0.08);
+  border-radius: var(--radius-pill);
+  transition: all 0.35s var(--ease-apple);
+}
+
+.glass-pill:hover {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: var(--glass-highlight), 0 12px 32px -8px rgba(60, 40, 30, 0.16);
+}
+[data-theme="night"] .glass-pill:hover {
+  background: rgba(38, 38, 44, 0.7);
+  box-shadow: var(--glass-highlight), 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* Focus Pull Reveal helper */
+@keyframes focusPull {
+  0% {
+    filter: blur(14px);
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-focus-pull {
+  animation: focusPull 1.1s var(--ease-apple) forwards;
+}
+
+/* Subtle background glowing ambient blobbing */
+.ambient-glow-disc {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.65;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  transition: all 1.2s var(--ease-apple);
+}
+[data-theme="night"] .ambient-glow-disc {
+  mix-blend-mode: screen;
+  opacity: 0.45;
+}
+
+/* Tactile button active click down */
+.tap-apple {
+  transition: transform 0.18s var(--ease-apple);
+}
+.tap-apple:active {
+  transform: scale(0.97);
+}
+
+/* Focus outline */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #A9C4FF;
+}
+
+/* Hide scrollbar for clean carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ───────────────────────── Liquid Glass Cursor ───────────────────────── */
+:root {
+  --cursor-ring: rgba(28, 28, 30, 0.55);
+  --cursor-dot: #1C1C1E;
+  --cursor-fill: rgba(255, 255, 255, 0.16);
+  --cursor-morph-bg: rgba(28, 28, 30, 0.06);
+  --cursor-morph-border: rgba(28, 28, 30, 0.14);
+  --cursor-spot: rgba(255, 255, 255, 0.6);
+  --cursor-caret: #FF7A3D;
+  --cursor-label-bg: rgba(255, 255, 255, 0.86);
+  --cursor-label-text: #1C1C1E;
+  --cursor-iridescent: conic-gradient(from var(--cursor-angle), #FF7A3D, #E23A8C, #3E5BFF, #9FD9C1, #FF7A3D);
+}
+[data-theme="night"] {
+  --cursor-ring: rgba(245, 245, 247, 0.6);
+  --cursor-dot: #F5F5F7;
+  --cursor-fill: rgba(255, 255, 255, 0.05);
+  --cursor-morph-bg: rgba(255, 255, 255, 0.06);
+  --cursor-morph-border: rgba(255, 255, 255, 0.18);
+  --cursor-spot: rgba(255, 255, 255, 0.2);
+  --cursor-caret: #9FD9C1;
+  --cursor-label-bg: rgba(26, 26, 30, 0.8);
+  --cursor-label-text: #F5F5F7;
+}
+
+@property --cursor-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+html.has-custom-cursor :is(input, textarea, [contenteditable=""], [contenteditable="true"]) {
+  cursor: text !important;
+}
+html.has-custom-cursor select {
+  cursor: default !important;
+}
+
+.cursor-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  transition: opacity 0.3s var(--ease-apple);
+}
+
+.cursor-ring {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1.5px solid var(--cursor-ring);
+  background-color: transparent;
+  backdrop-filter: saturate(180%) brightness(1.06);
+  -webkit-backdrop-filter: saturate(180%) brightness(1.06);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 6px 18px -6px rgba(0, 0, 0, 0.18);
+  transition:
+    opacity 0.3s var(--ease-apple),
+    background-color 0.35s var(--ease-apple),
+    border-color 0.35s var(--ease-apple),
+    box-shadow 0.35s var(--ease-apple);
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cursor-dot);
+}
+
+.cursor-spot {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 50%), var(--cursor-spot), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-apple);
+}
+
+.cursor-label {
+  position: relative;
+  flex-shrink: 0;
+  font: 600 10.5px/1 "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--cursor-label-text);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.2s var(--ease-apple), transform 0.35s var(--ease-apple);
+}
+
+/* hover: big soft lens over large interactive surfaces */
+.cursor-root[data-mode="hover"] .cursor-ring {
+  background-color: var(--cursor-fill);
+  border-color: var(--cursor-morph-border);
+}
+.cursor-root[data-mode="hover"] .cursor-spot,
+.cursor-root[data-mode="morph"] .cursor-spot {
+  opacity: 1;
+}
+
+/* morph: wraps small controls */
+.cursor-root[data-mode="morph"] .cursor-ring {
+  background-color: var(--cursor-morph-bg);
+  border-color: var(--cursor-morph-border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* label: glass pill with a rotating iridescent rim */
+.cursor-root[data-mode="label"] .cursor-ring {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--cursor-label-bg), var(--cursor-label-bg)) padding-box,
+    conic-gradient(from var(--cursor-angle), #FF7A3D, #E23A8C, #3E5BFF, #9FD9C1, #FF7A3D) border-box;
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: 0 10px 30px -10px rgba(226, 58, 140, 0.45);
+  animation: cursor-spin 2.4s linear infinite;
+}
+.cursor-root[data-mode="label"] .cursor-label {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* text: caret */
+.cursor-root[data-mode="text"] .cursor-ring {
+  border-color: transparent;
+  background-color: var(--cursor-caret);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 0 12px var(--cursor-caret);
+}
+
+.cursor-root[data-mode="morph"] .cursor-dot,
+.cursor-root[data-mode="label"] .cursor-dot,
+.cursor-root[data-mode="text"] .cursor-dot {
+  opacity: 0;
+}
+
+.cursor-root[data-mode="native"] .cursor-ring,
+.cursor-root[data-mode="native"] .cursor-dot,
+.cursor-root[data-visible="false"] .cursor-ring,
+.cursor-root[data-visible="false"] .cursor-dot {
+  opacity: 0;
+}
+
+.cursor-ripple {
+  position: fixed;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  background: var(--cursor-iridescent);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  animation: cursor-ripple 0.65s var(--ease-apple) forwards;
+}
+
+@keyframes cursor-spin {
+  to {
+    --cursor-angle: 360deg;
+  }
+}
+
+@keyframes cursor-ripple {
+  from {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-root[data-mode="label"] .cursor-ring {
+    animation: none;
+  }
+}
+
+/* ───────────────────────── Floating Dock ───────────────────────── */
+/* Lighter blur than the default glass: this layer sits over the WebGL scene and repaints every scroll frame */
+.dock-glass {
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  transition: background-color 0.35s var(--ease-apple), box-shadow 0.35s var(--ease-apple);
+}
+
+.dock-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 16px -6px rgba(60, 40, 30, 0.22);
+  will-change: transform, width;
+}
+[data-theme="night"] .dock-bubble {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.6);
+}
+
+.dock-tooltip {
+  background: var(--text);
+  color: var(--bg);
+  opacity: 0;
+  translate: -50% 4px;
+  scale: 0.9;
+  transition:
+    opacity 0.18s var(--ease-apple),
+    translate 0.25s var(--ease-apple),
+    scale 0.25s var(--ease-apple);
+}
+.group:hover .dock-tooltip,
+.group:focus-visible .dock-tooltip {
+  opacity: 1;
+  translate: -50% 0;
+  scale: 1;
+}
