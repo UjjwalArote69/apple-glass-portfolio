@@ -9,21 +9,21 @@ function contactApi(): Plugin {
     name: 'contact-api',
     apply: 'serve',
     configureServer(server) {
-      const env = loadEnv(server.config.mode, process.cwd(), '')
-      for (const [key, value] of Object.entries(env)) process.env[key] ??= value
-
       server.middlewares.use('/api/contact', async (req, res, next) => {
         if (req.method !== 'POST') return next()
         try {
           const chunks: Buffer[] = []
           for await (const chunk of req) chunks.push(chunk as Buffer)
-          const { POST } = await server.ssrLoadModule('/api/contact.ts')
-          const response: Response = await POST(
+          // Read .env on every request so a newly pasted key works without restarting
+          const env = loadEnv(server.config.mode, process.cwd(), '')
+          const { handleContact } = await server.ssrLoadModule('/api/contact.ts')
+          const response: Response = await handleContact(
             new Request('http://localhost/api/contact', {
               method: 'POST',
               headers: { 'content-type': 'application/json' },
               body: Buffer.concat(chunks),
             }),
+            env,
           )
           res.statusCode = response.status
           res.setHeader('content-type', 'application/json')

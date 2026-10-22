@@ -17,7 +17,15 @@ const json = (body: unknown, status = 200) => Response.json(body, { status });
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
 
-export async function POST(request: Request): Promise<Response> {
+type Env = Record<string, string | undefined>;
+
+// Vercel calls this for POST /api/contact
+export function POST(request: Request): Promise<Response> {
+  return handleContact(request, process.env);
+}
+
+// Separate from POST so the Vite dev server can pass in freshly read .env values
+export async function handleContact(request: Request, env: Env): Promise<Response> {
   let body: Record<string, unknown>;
   try {
     const parsed: unknown = await request.json();
@@ -46,7 +54,7 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: 'That message is too long. Please shorten it and try again.' }, 400);
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = env.RESEND_API_KEY;
   if (!apiKey || apiKey === PLACEHOLDER_KEY) {
     console.error('Contact form: RESEND_API_KEY is missing or still the placeholder');
     return json({ error: "The contact form isn't set up yet." }, 503);
@@ -54,8 +62,8 @@ export async function POST(request: Request): Promise<Response> {
 
   const safeName = name.replace(/\s+/g, ' ');
   const { error } = await new Resend(apiKey).emails.send({
-    from: process.env.CONTACT_FROM_EMAIL || DEFAULT_FROM,
-    to: process.env.CONTACT_TO_EMAIL || DEFAULT_TO,
+    from: env.CONTACT_FROM_EMAIL || DEFAULT_FROM,
+    to: env.CONTACT_TO_EMAIL || DEFAULT_TO,
     replyTo: email,
     subject: `Portfolio message from ${safeName}`,
     text: `${message}\n\n${safeName}\n${email}`,
