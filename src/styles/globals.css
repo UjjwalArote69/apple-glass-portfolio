@@ -1602,3 +1602,14 @@ html.has-custom-cursor select {
     }
   }
 }
+
+/* ===== Footer ===== */
+@layer components {
+  .site-footer {
+    color: var(--text-2);
+  }
+  /* Sits on the bright night gradient, where the standard grey disappears */
+  [data-theme="night"] .site-footer {
+    color: rgba(245, 245, 247, 0.75);
+  }
+}
