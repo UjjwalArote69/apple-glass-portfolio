@@ -12,13 +12,11 @@ export interface Project {
   tags: string[];
   image: string;
   accentColor: string; // for night mode vivid gradient tile
-  nightTileClass: string;
   link: string;
   overview: string;
   gallery: string[];
   outcomes: ProjectOutcome[];
   featured?: boolean;
-  bentoSpan?: string; // Tailwind grid span
   category?: 'personal' | 'internship';
 }
 
@@ -32,12 +30,15 @@ export interface StatItem {
 
 export interface ExperienceItem {
   id: string;
+  kind: 'Work' | 'Education' | 'Independent';
   company: string;
   role: string;
   period: string;
   location: string;
   description: string;
   highlights: string[];
+  // Project ids from `projects`, shown as links into their case studies
+  projects?: string[];
 }
 
 export interface SkillCategory {
@@ -59,25 +60,26 @@ export interface PortfolioContent {
     tagline: string;
     location: string;
     avatar: string;
-    currentCompany: string;
-    currentRole: string;
-    bioLines: string[];
     availableForWork: boolean;
     statusText: string;
-    shippedCount: number;
     email: string;
     resumeUrl: string;
+  };
+  about: {
+    lead: string;
+    // Supports inline [text](url) links
+    paragraphs: string[];
+    facts: { label: string; value: string; detail?: string }[];
   };
   headline: {
     greeting: string;
     lead: string;
     emphasis: string;
-    filterPills: string[];
   };
   stats: StatItem[];
   projects: Project[];
   skills: SkillCategory[];
   experience: ExperienceItem[];
   socials: SocialLink[];
-  quickLinks: { title: string; href: string; icon: string; badge?: string }[];
+  quickLinks: { title: string; description?: string; href: string; icon: string; badge?: string }[];
 }

@@ -6,31 +6,30 @@ import { content } from '../../content';
 
 interface TopBarProps {
   theme: Theme;
+  isQuickLinksOpen: boolean;
   onToggleTheme: () => void;
   onOpenQuickLinks: () => void;
 }
 
-export function TopBar({ theme, onToggleTheme, onOpenQuickLinks }: TopBarProps) {
+export function TopBar({ theme, isQuickLinksOpen, onToggleTheme, onOpenQuickLinks }: TopBarProps) {
   const { author } = content;
 
   return (
     <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 py-4 pointer-events-none transition-all duration-300">
       <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
-        {/* Left: Quick links grid button & Projects stat pill */}
+        {/* Left: Quick links grid button */}
         <div className="flex items-center gap-3">
           <IconButton
             size="md"
-            tooltip="Quick navigation"
+            tooltip="Quick navigation (Ctrl/⌘ K)"
+            aria-label="Open quick navigation"
+            aria-haspopup="dialog"
+            aria-expanded={isQuickLinksOpen}
             onClick={onOpenQuickLinks}
             className="shadow-sm"
           >
             <LayoutGrid className="w-4 h-4 stroke-[1.5]" />
           </IconButton>
-
-          <GlassPill size="md" className="hidden sm:inline-flex shadow-sm cursor-default">
-            <span>🏆</span>
-            <span className="font-medium text-[var(--text)]">{author.shippedCount} projects shipped</span>
-          </GlassPill>
         </div>
 
         {/* Right: Availability indicator, Theme toggle pill, Avatar */}

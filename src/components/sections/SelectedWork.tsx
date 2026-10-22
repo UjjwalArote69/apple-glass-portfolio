@@ -1,247 +1,224 @@
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { content } from '../../content';
 import type { Project } from '../../types/portfolio';
-import { GlassPill } from '../ui/GlassPill';
-import type { Theme } from '../../hooks/useTheme';
+import { hostname } from '../../utils/url';
+
+type Filter = 'all' | 'personal' | 'internship';
 
 interface SelectedWorkProps {
-  theme: Theme;
   onSelectProject: (project: Project) => void;
 }
 
-export function SelectedWork({ theme, onSelectProject }: SelectedWorkProps) {
-  const { projects } = content;
-  const [filter, setFilter] = useState<'all' | 'personal' | 'internship'>('all');
+const EASE = [0.32, 0.72, 0, 1] as const;
 
-  const filteredProjects = projects.filter((p) => {
-    if (filter === 'all') return true;
-    return p.category === filter;
-  });
+const CATEGORY_LABEL: Record<NonNullable<Project['category']>, string> = {
+  personal: 'Personal',
+  internship: 'MEKA Group',
+};
+
+export function SelectedWork({ onSelectProject }: SelectedWorkProps) {
+  const { projects } = content;
+  const [filter, setFilter] = useState<Filter>('all');
+
+  const filters: { id: Filter; label: string; count: number }[] = [
+    { id: 'all', label: 'All', count: projects.length },
+    { id: 'personal', label: 'Personal', count: projects.filter((p) => p.category === 'personal').length },
+    { id: 'internship', label: 'MEKA Group', count: projects.filter((p) => p.category === 'internship').length },
+  ];
+
+  const visible = filter === 'all' ? projects : projects.filter((p) => p.category === filter);
+  const years = projects.map((p) => Number(p.year));
+  const range = `${Math.min(...years)}–${Math.max(...years)}`;
 
   return (
     <section id="work" className="px-4 sm:px-8 py-24 max-w-7xl mx-auto relative z-10">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
         <div>
           <span className="text-xs uppercase tracking-widest text-[var(--text-3)] font-semibold block mb-2">
-            02 // Portfolio
+            02 // Work
           </span>
           <h2 className="text-3xl sm:text-5xl font-light text-[var(--text)] tracking-tight">
-            Selected Work <span className="font-semibold text-neutral-950 dark:text-white">· 2024–2025</span>
+            Selected work <span className="text-[var(--text-3)]">{range}</span>
           </h2>
+          <p className="mt-3 text-[15px] text-[var(--text-2)] max-w-md">
+            Tools I&apos;ve built on my own, and the sites I shipped for MEKA Group.
+          </p>
         </div>
-        <p className="text-sm text-[var(--text-2)] max-w-sm font-normal">
-          Production distributed system simulators, conversational AI companions, and enterprise marine infrastructure platforms.
-        </p>
+
+        {/* Segmented filter */}
+        <LayoutGroup id="work-filter">
+          <div role="tablist" aria-label="Filter projects" className="work-filter self-start lg:self-auto">
+            {filters.map((f) => {
+              const active = filter === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setFilter(f.id)}
+                  className="work-filter-tab"
+                  data-active={active}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="work-filter-thumb"
+                      className="work-filter-thumb"
+                      transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                    />
+                  )}
+                  <span className="relative">
+                    {f.label} <span className="work-filter-count">{f.count}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </LayoutGroup>
       </div>
 
-      {/* Category Filter Pills */}
-      <div className="flex flex-wrap items-center gap-2.5 mb-8">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-full text-xs font-medium cursor-pointer transition-all duration-300 ${
-            filter === 'all'
-              ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-102'
-              : 'glass-pill text-[var(--text-2)] hover:text-[var(--text)]'
-          }`}
-        >
-          All Projects ({projects.length})
-        </button>
-        <button
-          onClick={() => setFilter('personal')}
-          className={`px-4 py-2 rounded-full text-xs font-medium cursor-pointer transition-all duration-300 ${
-            filter === 'personal'
-              ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-102'
-              : 'glass-pill text-[var(--text-2)] hover:text-[var(--text)]'
-          }`}
-        >
-          Personal & AI Tools ({projects.filter((p) => p.category === 'personal').length})
-        </button>
-        <button
-          onClick={() => setFilter('internship')}
-          className={`px-4 py-2 rounded-full text-xs font-medium cursor-pointer transition-all duration-300 ${
-            filter === 'internship'
-              ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-102'
-              : 'glass-pill text-[var(--text-2)] hover:text-[var(--text)]'
-          }`}
-        >
-          MEKA Group Internship ({projects.filter((p) => p.category === 'internship').length})
-        </button>
-      </div>
-
-      {/* Bento Grid */}
-      <div className="grid grid-cols-12 gap-5 sm:gap-6 auto-rows-[360px] sm:auto-rows-[390px]">
-        {filteredProjects.map((project) => (
-          <BentoTile
-            key={project.id}
-            project={project}
-            theme={theme}
-            onSelect={() => onSelectProject(project)}
-          />
-        ))}
+      {/* Grid: the first project gets the wide featured layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {visible.map((project, i) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              featured={i === 0}
+              onSelect={() => onSelectProject(project)}
+            />
+          ))}
+        </AnimatePresence>
       </div>
     </section>
   );
 }
 
-interface BentoTileProps {
+interface ProjectCardProps {
   project: Project;
-  theme: Theme;
+  featured: boolean;
   onSelect: () => void;
 }
 
-function BentoTile({ project, theme, onSelect }: BentoTileProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [sheenPos, setSheenPos] = useState({ x: 50, y: 50 });
-  const [isHovered, setIsHovered] = useState(false);
+function ProjectCard({ project, featured, onSelect }: ProjectCardProps) {
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const maxTilt = featured ? 3 : 5;
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    // Calculate max 6° tilt
-    const rotX = ((y - centerY) / centerY) * -6;
-    const rotY = ((x - centerX) / centerX) * 6;
-
-    setRotateX(rotX);
-    setRotateY(rotY);
-    setSheenPos({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100,
-    });
+  // Tilt + sheen are written straight to CSS variables: no re-render per pointer move
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const el = tiltRef.current;
+    if (!el || e.pointerType !== 'mouse') return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    el.style.setProperty('--rx', `${(0.5 - y) * 2 * maxTilt}deg`);
+    el.style.setProperty('--ry', `${(x - 0.5) * 2 * maxTilt}deg`);
+    el.style.setProperty('--mx', `${x * 100}%`);
+    el.style.setProperty('--my', `${y * 100}%`);
   };
 
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-    setIsHovered(false);
+  const handlePointerLeave = () => {
+    const el = tiltRef.current;
+    if (!el) return;
+    el.style.setProperty('--rx', '0deg');
+    el.style.setProperty('--ry', '0deg');
+  };
+
+  // Flatten the tilt first so the screenshot leaves the card from a clean rectangle
+  const open = () => {
+    handlePointerLeave();
+    onSelect();
+  };
+
+  // Mouse users can click anywhere on the card; the title button is the keyboard/AT control
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
+    if ((e.target as HTMLElement).closest('a, button')) return;
+    open();
   };
 
   return (
-    <motion.div
-      ref={cardRef}
-      layoutId={`card-container-${project.id}`}
-      data-project-id={project.id}
-      role="button"
-      tabIndex={0}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <motion.article
+      layout
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.45, ease: EASE }}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      onClick={handleCardClick}
       data-cursor="View"
-      style={{
-        transformStyle: 'preserve-3d',
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-      }}
-      className={`glass-card p-6 sm:p-8 flex flex-col justify-between cursor-pointer group transition-transform duration-200 ease-out select-none focus:outline-none focus:ring-2 focus:ring-neutral-400/50 ${
-        project.bentoSpan || 'col-span-12 lg:col-span-6'
-      }`}
+      className={`work-card ${featured ? 'md:col-span-2' : ''}`}
+      style={{ '--accent': project.accentColor } as React.CSSProperties}
+      data-project-id={project.id}
+      data-featured={featured}
     >
-      {/* Background Image: heavily blurred by default, sharpens on hover */}
-      <div className="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
-        <img
-          src={project.image}
-          alt={project.title}
-          className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-            isHovered
-              ? 'blur-0 scale-105 opacity-90'
-              : 'blur-[28px] scale-120 opacity-40 dark:opacity-25'
-          }`}
-        />
-
-        {/* Night mode vivid radial gradient overlay with technical tick-mark dials */}
-        {theme === 'night' && (
-          <div
-            className={`absolute inset-0 bg-gradient-to-br ${project.nightTileClass} opacity-80 mix-blend-screen transition-opacity duration-500`}
-          >
-            {/* Fine tick mark decorative dials */}
-            <div className="absolute top-4 right-4 flex items-center gap-1 opacity-40">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              <span className="w-8 h-[1px] bg-white/40" />
-              <span className="text-[9px] font-mono tracking-tighter text-white">MOD.{project.year}</span>
+      <div ref={tiltRef} className="work-tilt">
+        <div className={`work-inner ${featured ? 'lg:grid lg:grid-cols-12' : ''}`}>
+          {/* Screenshot in a browser frame */}
+          <div className={`work-media ${featured ? 'lg:col-span-7' : ''}`}>
+            <div className="work-chrome" aria-hidden="true">
+              <span className="work-chrome-dots">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="work-chrome-url">{hostname(project.link)}</span>
             </div>
-            <div className="absolute bottom-4 left-6 flex items-center gap-2 opacity-30">
-              <div className="w-12 h-[1px] bg-white/40" />
-              <span className="text-[8px] font-mono text-white">48.204 // REF</span>
+            {/* Shares its layoutId with the case-study sheet: this screenshot flies into it */}
+            <motion.div layoutId={`project-shot-${project.id}`} className="work-shot" style={{ borderRadius: 16 }}>
+              <img
+                src={project.image}
+                alt={`${project.title} homepage`}
+                width={1920}
+                height={1125}
+                loading={featured ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <span className="work-sheen" aria-hidden="true" />
+            </motion.div>
+          </div>
+
+          {/* Details */}
+          <div className={`work-body ${featured ? 'lg:col-span-5 lg:justify-center' : ''}`}>
+            <p className="work-meta">
+              <span className="work-dot" aria-hidden="true" />
+              {project.category ? CATEGORY_LABEL[project.category] : 'Project'}
+              <span aria-hidden="true">·</span>
+              {project.year}
+            </p>
+
+            <h3 className={`work-title ${featured ? 'lg:text-[2rem]' : ''}`}>
+              <button type="button" onClick={open} className="work-open" data-cursor="View">
+                {project.title}
+              </button>
+            </h3>
+
+            <p className={`work-desc ${featured ? '' : 'line-clamp-2'}`}>{project.oneLiner}</p>
+
+            <div className="work-footer">
+              <ul className="work-tags" aria-label="Tags">
+                {project.tags.slice(0, featured ? 4 : 3).map((tag) => (
+                  <li key={tag}>{tag}</li>
+                ))}
+              </ul>
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="work-live"
+                data-cursor="Visit"
+                aria-label={`Open ${project.title} live site`}
+              >
+                Live
+                <ArrowUpRight className="w-3.5 h-3.5 stroke-[2]" />
+              </a>
             </div>
           </div>
-        )}
-
-        {/* Ambient Glass Wash */}
-        <div className="absolute inset-0 bg-white/30 dark:bg-black/40 backdrop-blur-md" />
-
-        {/* Hover Sheen Light Sweep */}
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{
-            opacity: isHovered ? 0.7 : 0,
-            background: `radial-gradient(circle at ${sheenPos.x}% ${sheenPos.y}%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`,
-          }}
-        />
-      </div>
-
-      {/* Top Meta: Year, Tags, and Action Button */}
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <GlassPill size="sm" className="bg-white/80 dark:bg-black/60 shadow-sm font-semibold">
-            {project.year}
-          </GlassPill>
-          {project.tags.slice(0, 2).map((tag) => (
-            <GlassPill
-              key={tag}
-              size="sm"
-              className="bg-white/40 dark:bg-white/10 text-xs hidden sm:inline-flex"
-            >
-              {tag}
-            </GlassPill>
-          ))}
         </div>
-
-        {/* Circular Action Button: links directly to live site */}
-        <motion.a
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          title={`Open ${project.title} live demo`}
-          animate={{
-            scale: isHovered ? 1.08 : 0.95,
-            opacity: isHovered ? 1 : 0.85,
-          }}
-          className="w-11 h-11 rounded-full glass-pill flex items-center justify-center bg-white/90 dark:bg-white/20 shadow-md hover:bg-white hover:scale-110 active:scale-95 text-neutral-900 dark:text-white z-20 cursor-pointer"
-        >
-          <ArrowUpRight className="w-4 h-4 stroke-[2] group-hover:rotate-45 transition-transform duration-300" />
-        </motion.a>
       </div>
-
-      {/* Bottom Content: Title & One-Liner */}
-      <div className="relative z-10 pt-10 pb-2">
-        <div className="inline-flex items-center gap-1.5 text-xs text-[var(--text-2)] mb-1 font-medium">
-          <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-          <span>{project.role}</span>
-        </div>
-        <h3 className="text-2xl sm:text-3xl font-semibold text-[var(--text)] tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
-          {project.title}
-        </h3>
-        <p className="text-sm sm:text-base text-[var(--text-2)] line-clamp-2 max-w-xl font-normal leading-relaxed">
-          {project.oneLiner}
-        </p>
-      </div>
-    </motion.div>
+    </motion.article>
   );
 }

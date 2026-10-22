@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useLenis } from './hooks/useLenis';
 import { useTheme } from './hooks/useTheme';
 import { useMouseDamped } from './hooks/useMouseDamped';
@@ -32,7 +32,11 @@ export function App() {
 
   // Modal and navigation states
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  // Only a click on a Work card has an on-screen screenshot to morph from
+  const [openedFromCard, setOpenedFromCard] = useState(false);
   const [isQuickLinksOpen, setIsQuickLinksOpen] = useState(false);
+  const openQuickLinks = useCallback(() => setIsQuickLinksOpen(true), []);
+  const closeQuickLinks = useCallback(() => setIsQuickLinksOpen(false), []);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Carousel navigation within modal
@@ -81,7 +85,8 @@ export function App() {
       <TopBar
         theme={theme}
         onToggleTheme={toggleTheme}
-        onOpenQuickLinks={() => setIsQuickLinksOpen(true)}
+        isQuickLinksOpen={isQuickLinksOpen}
+        onOpenQuickLinks={openQuickLinks}
       />
 
       {/* Main Content Sections */}
@@ -90,11 +95,18 @@ export function App() {
         <SummaryStrip />
         <AboutCard />
         <SelectedWork
-          theme={theme}
-          onSelectProject={(p) => setSelectedProject(p)}
+          onSelectProject={(p) => {
+            setOpenedFromCard(true);
+            setSelectedProject(p);
+          }}
         />
         <SkillsSection />
-        <ExperienceTimeline />
+        <ExperienceTimeline
+          onSelectProject={(p) => {
+            setOpenedFromCard(false);
+            setSelectedProject(p);
+          }}
+        />
         <ContactSection onShowToast={(msg) => setToastMessage(msg)} />
       </main>
 
@@ -107,6 +119,7 @@ export function App() {
       {/* Shared-Element Project Detail Modal */}
       <ProjectDetailModal
         project={selectedProject}
+        sharedElement={openedFromCard}
         onClose={() => setSelectedProject(null)}
         onNext={handleNextProject}
         onPrev={handlePrevProject}
@@ -115,7 +128,8 @@ export function App() {
       {/* Quick Links Drawer Sheet */}
       <QuickLinksSheet
         isOpen={isQuickLinksOpen}
-        onClose={() => setIsQuickLinksOpen(false)}
+        onOpen={openQuickLinks}
+        onClose={closeQuickLinks}
       />
 
       {/* Glass Notification Toast */}

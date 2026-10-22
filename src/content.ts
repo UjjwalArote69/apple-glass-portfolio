@@ -7,26 +7,30 @@ export const content: PortfolioContent = {
     tagline: "Engineering distributed systems, intelligent AI agents & calm tactile interfaces.",
     location: "Mumbai, India",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-    currentCompany: "Atharva College of Engineering & MEKA Group",
-    currentRole: "Full Stack AI Developer · BE Computer Engineering",
-    bioLines: [
-      "19-year-old Full Stack AI Developer pursuing BE in Computer Engineering from Atharva College of Engineering, Mumbai.",
-      "Architected distributed system load simulators (Kendall), visual database builders (SchemaStudio), and conversational AI tutors (Yapster).",
-      "Engineered 5 enterprise marine engineering and infrastructure digital portals during web development internship at MEKA Group.",
-      "Passionate about fusing deep algorithmic AI workflows with tactile, high-performance web engineering."
-    ],
     availableForWork: true,
     statusText: "Available for AI & Full Stack Roles",
-    shippedCount: 9,
     email: "ujjwalarote@gmail.com",
     resumeUrl: "#resume"
+  },
+
+  about: {
+    lead: "I'm Ujjwal, a computer engineering student in Mumbai who builds full-stack web apps, often with AI at the core.",
+    paragraphs: [
+      "My own projects sit where AI, systems and interfaces meet. [Kendall](https://kendall-web.vercel.app/) lets you sketch an architecture and send simulated traffic through it to see where it breaks. [SchemaStudio](https://schema-studio.vercel.app/) turns database design into a visual canvas that writes the SQL for you. [Yapster](http://yapster-2-0.vercel.app/welcome) is a German tutor you can hold a conversation with.",
+      "Since 2024 I've also been building the web side of MEKA Group: five sites, from the group's corporate home at [meka.com](https://meka.com/) to its maritime, dredging, consulting and safety-tech businesses.",
+      "I graduate in 2027 and I'm open to AI and full-stack roles."
+    ],
+    facts: [
+      { label: "Studying", value: "BE Computer Engineering", detail: "Atharva College of Engineering, 2023 to 2027" },
+      { label: "Working", value: "Web Developer Intern", detail: "MEKA Group, since 2024" },
+      { label: "Usually in", value: "React, TypeScript, Node.js", detail: "Python for the AI side" }
+    ]
   },
 
   headline: {
     greeting: "Hello, I'm Ujjwal Arote",
     lead: "Full Stack AI Developer",
-    emphasis: "",
-    filterPills: ["Full Stack AI", "Distributed Systems", "Conversational AI", "Database Architecture", "Enterprise Web"]
+    emphasis: ""
   },
 
   stats: [
@@ -70,7 +74,6 @@ export const content: PortfolioContent = {
       tags: ["Distributed Systems", "Load Simulation", "React", "TypeScript", "PWA"],
       image: "/projects/kendall.jpg",
       accentColor: "#3B82F6",
-      nightTileClass: "from-blue-950/70 via-indigo-900/40 to-black/70",
       link: "https://kendall-web.vercel.app/",
       category: "personal",
       overview: "Kendall serves as a flight simulator for system design. It allows software architects and engineers to visually sketch distributed service topologies on a canvas, simulate realistic discrete-event traffic loads and failovers, and pinpoint database saturations and latency bottlenecks before shipping code to production.",
@@ -82,8 +85,7 @@ export const content: PortfolioContent = {
         { metric: "3.2k", label: "Peak simulated RPS load" },
         { metric: "<5ms", label: "Canvas graph latency" }
       ],
-      featured: true,
-      bentoSpan: "col-span-12 lg:col-span-8 row-span-2"
+      featured: true
     },
     {
       id: "schema-studio",
@@ -94,7 +96,6 @@ export const content: PortfolioContent = {
       tags: ["Database Architecture", "SQL Generation", "Prisma", "Mongoose", "React"],
       image: "/projects/schema-studio.jpg",
       accentColor: "#10B981",
-      nightTileClass: "from-emerald-950/70 via-teal-900/40 to-black/70",
       link: "https://schema-studio.vercel.app/",
       category: "personal",
       overview: "SchemaStudio is a visual database architecting tool. Users drag-and-drop tables, link foreign-key relations with visual connectors, configure column constraints, and immediately export production-ready SQL DDL, Prisma schema files, and Mongoose models with zero compilation delay.",
@@ -106,8 +107,7 @@ export const content: PortfolioContent = {
         { metric: "1.0", label: "Live production release" },
         { metric: "0ms", label: "Client-side export time" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-4 row-span-1"
+      featured: false
     },
     {
       id: "yapster",
@@ -118,7 +118,6 @@ export const content: PortfolioContent = {
       tags: ["Conversational AI", "LLMs", "Audio Speech API", "Context Memory", "React"],
       image: "/projects/yapster.jpg",
       accentColor: "#8B5CF6",
-      nightTileClass: "from-purple-950/70 via-violet-900/40 to-black/70",
       link: "http://yapster-2-0.vercel.app/welcome",
       category: "personal",
       overview: "Yapster transforms language learning from mechanical flashcards into real daily conversations. Built with an empathetic conversational persona and persistent memory, the AI tutor tracks previous dialogue topics, remembers past user corrections, and offers constructive post-chat grammar breakdowns.",
@@ -130,8 +129,7 @@ export const content: PortfolioContent = {
         { metric: "Memory", label: "Context retention across chats" },
         { metric: "Realtime", label: "Audio speech response" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-4 row-span-1"
+      featured: false
     },
     {
       id: "whispr",
@@ -142,7 +140,6 @@ export const content: PortfolioContent = {
       tags: ["Next.js", "Full Stack", "Data Privacy", "Tailwind CSS", "Vercel"],
       image: "/projects/whispr.jpg",
       accentColor: "#F59E0B",
-      nightTileClass: "from-amber-950/70 via-orange-900/40 to-black/70",
       link: "https://whispr-lemon.vercel.app/",
       category: "personal",
       overview: "An unfiltered, private feedback and confession platform designed with a high-contrast minimalist aesthetic. Allows users to claim unique shareable links and receive raw, authentic feedback directly to their dashboard with zero surveillance or tracking cookies.",
@@ -154,8 +151,7 @@ export const content: PortfolioContent = {
         { metric: "Instant", label: "Direct-to-dashboard delivery" },
         { metric: "100%", label: "Anonymity assurance" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     },
     {
       id: "meka-group",
@@ -166,7 +162,6 @@ export const content: PortfolioContent = {
       tags: ["Enterprise Web", "Corporate UI", "Marine Infrastructure", "Performance"],
       image: "/projects/meka-group.jpg",
       accentColor: "#0EA5E9",
-      nightTileClass: "from-sky-950/70 via-cyan-900/40 to-black/70",
       link: "https://meka.com/",
       category: "internship",
       overview: "The primary digital corporate portal for MEKA Group, encapsulating 45+ years of coastal infrastructure, marine construction, and civil engineering across India and the Middle East. Features modern responsive navigation, legacy timelines, and project showcases.",
@@ -178,8 +173,7 @@ export const content: PortfolioContent = {
         { metric: "Global", label: "Middle East & India operations" },
         { metric: "99+", label: "Google PageSpeed performance" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     },
     {
       id: "amma-lines",
@@ -190,7 +184,6 @@ export const content: PortfolioContent = {
       tags: ["Marine Engineering", "Infrastructure", "Multilingual UI", "Animations"],
       image: "/projects/amma-lines.jpg",
       accentColor: "#06B6D4",
-      nightTileClass: "from-cyan-950/70 via-teal-900/40 to-black/70",
       link: "https://amma-lines.vercel.app/",
       category: "internship",
       overview: "Showcase portal for Amma Lines Pvt. Ltd., the flagship marine engineering arm of MEKA Group incorporated in 1978. Highlights over 1,300 meters of armored breakwaters on the Bay of Bengal, deepwater jetties, and heavy coastal dredging fleets across 12 disciplines.",
@@ -202,8 +195,7 @@ export const content: PortfolioContent = {
         { metric: "12", label: "Marine engineering disciplines" },
         { metric: "3", label: "Languages supported (EN/HI/AR)" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     },
     {
       id: "meka-dredging",
@@ -214,7 +206,6 @@ export const content: PortfolioContent = {
       tags: ["Marine Dredging", "Hydrographic Tech", "Fleet Showcase", "Interactive UI"],
       image: "/projects/meka-dredging.jpg",
       accentColor: "#3B82F6",
-      nightTileClass: "from-blue-950/70 via-indigo-900/40 to-black/70",
       link: "https://meka-dredging.vercel.app/",
       category: "internship",
       overview: "Specialized operations portal for MEKA Dredging, focusing on coastal boundary redefinition, cutter suction fleets, trailing suction hopper dredgers, and channel depth maintenance. Built with high-craft technical typography and interactive fleet data sheets.",
@@ -226,8 +217,7 @@ export const content: PortfolioContent = {
         { metric: "Fleet", label: "Technical equipment registry" },
         { metric: "60fps", label: "Smooth scroll interactions" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     },
     {
       id: "meka-consultants",
@@ -238,7 +228,6 @@ export const content: PortfolioContent = {
       tags: ["Strategic Consulting", "Engineering Advisory", "Corporate UI", "Tailwind"],
       image: "/projects/meka-consultants.jpg",
       accentColor: "#6366F1",
-      nightTileClass: "from-indigo-950/70 via-purple-900/40 to-black/70",
       link: "https://meka-consultants.vercel.app/",
       category: "internship",
       overview: "Digital platform for MEKA Consultants, providing strategic management consulting, operational excellence advisory, and capital project consulting for large-scale infrastructure clients.",
@@ -250,8 +239,7 @@ export const content: PortfolioContent = {
         { metric: "100%", label: "Clean modern design system" },
         { metric: "Fast", label: "Sub-second page transitions" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     },
     {
       id: "nari-astra",
@@ -262,7 +250,6 @@ export const content: PortfolioContent = {
       tags: ["Product Showcase", "Safety Tech", "E-Commerce UI", "React"],
       image: "/projects/nari-astra.jpg",
       accentColor: "#EC4899",
-      nightTileClass: "from-pink-950/70 via-rose-900/40 to-black/70",
       link: "https://nari-astra.vercel.app/",
       category: "internship",
       overview: "A luxury self-defense and personal protection product showcase. Features an empowering aesthetic, interactive safety mechanism demonstrations, story section, and an intuitive product catalog designed to put safety directly into women's hands.",
@@ -274,8 +261,7 @@ export const content: PortfolioContent = {
         { metric: "Safety", label: "Empowerment narrative driven" },
         { metric: "Cart", label: "Seamless checkout flow preview" }
       ],
-      featured: false,
-      bentoSpan: "col-span-12 lg:col-span-6 row-span-1"
+      featured: false
     }
   ],
 
@@ -320,57 +306,59 @@ export const content: PortfolioContent = {
   experience: [
     {
       id: "exp-1",
+      kind: "Work",
       company: "MEKA Group",
       role: "Full Stack & Web Developer Intern",
       period: "2024 — Present",
       location: "Mumbai, India",
-      description: "Spearheaded the front-end architecture and deployment of 5 core enterprise digital portals across the group's maritime, engineering, dredging, and consulting subsidiaries.",
+      description: "I build and ship the group's websites, from the corporate site at meka.com to the sites for its maritime, dredging, consulting and safety-tech businesses.",
       highlights: [
-        "Architected and deployed the flagship MEKA Group corporate platform (meka.com) and Amma Lines maritime infrastructure showcase.",
-        "Engineered specialized operations platforms for MEKA Dredging and MEKA Consultants with responsive, high-performance web systems.",
-        "Built the modern product showcase platform for Nari Astra personal safety technology with interactive design and fluid animations."
-      ]
-    },
-    {
-      id: "exp-2",
-      company: "Atharva College of Engineering",
-      role: "BE in Computer Engineering",
-      period: "2023 — 2027 (Pursuing)",
-      location: "Mumbai, India",
-      description: "Pursuing Bachelor of Engineering in Computer Engineering at 19 years old. Focused on distributed systems, AI/ML algorithms, data structures, and database architecture.",
-      highlights: [
-        "Core coursework in Distributed Systems, Operating Systems, Database Management Systems, and Artificial Intelligence.",
-        "Architected and released Kendall (system design simulator) and SchemaStudio (visual database designer).",
-        "Active builder in the collegiate and global AI/developer open source ecosystem."
-      ]
+        "Built the front end of five sites and handled their deployment.",
+        "Designed Nari Astra's product site for a personal-safety brand, with interactive sections and motion."
+      ],
+      projects: ["meka-group", "amma-lines", "meka-dredging", "meka-consultants", "nari-astra"]
     },
     {
       id: "exp-3",
-      company: "Independent AI & Systems Builder",
+      kind: "Independent",
+      company: "Independent projects",
       role: "Full Stack AI Developer",
       period: "2023 — Present",
       location: "Mumbai / Remote",
-      description: "Independently architected and launched production AI web applications and developer tools used by global builders.",
+      description: "Alongside college I build my own tools, mostly where AI and systems design meet.",
       highlights: [
-        "Created Kendall: an interactive flight simulator for system design to detect architectural bottlenecks under load.",
-        "Built Yapster 2.0: an AI conversational German tutor with persistent context memory and speech feedback.",
-        "Shipped SchemaStudio and Whispr on Vercel with zero-compromise speed, security, and fluid user experience."
+        "Kendall lets you sketch a system's architecture and simulate traffic to find bottlenecks before production.",
+        "Yapster is a German tutor you can talk to, with memory of past conversations and speech feedback.",
+        "SchemaStudio and Whispr are both live on Vercel."
+      ],
+      projects: ["kendall", "schema-studio", "yapster", "whispr"]
+    },
+    {
+      id: "exp-2",
+      kind: "Education",
+      company: "Atharva College of Engineering",
+      role: "BE in Computer Engineering",
+      period: "2023 — 2027",
+      location: "Mumbai, India",
+      description: "Bachelor of Engineering in Computer Engineering, graduating in 2027.",
+      highlights: [
+        "Coursework in distributed systems, operating systems, databases and artificial intelligence."
       ]
     }
   ],
 
   socials: [
-    { platform: "GitHub", handle: "@ujjwalarote", url: "https://github.com", icon: "github" },
+    { platform: "GitHub", handle: "@UjjwalArote69", url: "https://github.com/UjjwalArote69", icon: "github" },
     { platform: "LinkedIn", handle: "ujjwal-arote", url: "https://linkedin.com", icon: "linkedin" },
     { platform: "X / Twitter", handle: "@ujjwalarote", url: "https://twitter.com", icon: "twitter" },
     { platform: "Portfolio", handle: "ujjwal.dev", url: "#", icon: "dribbble" }
   ],
 
   quickLinks: [
-    { title: "Selected Work", href: "#work", icon: "layers", badge: "9 Projects" },
-    { title: "About & Profile", href: "#about", icon: "user" },
-    { title: "Skills & Stack", href: "#skills", icon: "cpu" },
-    { title: "Experience Timeline", href: "#experience", icon: "briefcase" },
-    { title: "Get in Touch", href: "#contact", icon: "mail", badge: "Open" }
+    { title: "About", description: "Who I am, what I study and how I build", href: "#about", icon: "user" },
+    { title: "Work", description: "Shipped AI, systems and enterprise projects", href: "#work", icon: "layers", badge: "9 Projects" },
+    { title: "Skills", description: "Languages, frameworks and tools I use daily", href: "#skills", icon: "cpu" },
+    { title: "Experience", description: "Internships, freelance and independent work", href: "#experience", icon: "briefcase" },
+    { title: "Contact", description: "Open to AI and full-stack roles", href: "#contact", icon: "mail", badge: "Open" }
   ]
 };

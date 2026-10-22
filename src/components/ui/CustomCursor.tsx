@@ -400,6 +400,13 @@ export function CustomCursor() {
     const onMouseUp = (e: MouseEvent) => {
       pressed = false;
       spawnRipple(e.clientX, e.clientY);
+      // A click often opens or swaps UI under a still pointer (modals, menus), so re-hit-test
+      window.setTimeout(() => {
+        if (!visible) return;
+        rawTarget = null;
+        classify(document.elementFromPoint(mouse.x, mouse.y));
+        wake();
+      }, 80);
       wake();
     };
 

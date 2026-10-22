@@ -1,114 +1,314 @@
-import { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Layers, User, Cpu, Briefcase, Mail, ArrowUpRight } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
+import { X, ArrowRight, Copy, Check } from 'lucide-react';
 import { content } from '../../content';
-import { IconButton } from '../ui/IconButton';
-import { GlassCard } from '../ui/GlassCard';
+import { lockScroll, unlockScroll, scrollToTarget } from '../../hooks/useLenis';
+import { getActiveSection } from '../../utils/activeSection';
+import { SocialIcon } from '../ui/BrandIcons';
+import { LocalTime } from '../ui/LocalTime';
 
 interface QuickLinksSheetProps {
   isOpen: boolean;
+  onOpen: () => void;
   onClose: () => void;
 }
 
-const iconMap: Record<string, React.ReactNode> = {
-  layers: <Layers className="w-5 h-5 stroke-[1.5]" />,
-  user: <User className="w-5 h-5 stroke-[1.5]" />,
-  cpu: <Cpu className="w-5 h-5 stroke-[1.5]" />,
-  briefcase: <Briefcase className="w-5 h-5 stroke-[1.5]" />,
-  mail: <Mail className="w-5 h-5 stroke-[1.5]" />,
-};
+const EASE = [0.32, 0.72, 0, 1] as const;
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const SHORTCUT = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl K';
+const sectionIds = content.quickLinks.map((link) => link.href.slice(1));
 
-export function QuickLinksSheet({ isOpen, onClose }: QuickLinksSheetProps) {
+export function QuickLinksSheet({ isOpen, onOpen, onClose }: QuickLinksSheetProps) {
+  // ⌘K / Ctrl+K toggles the menu from anywhere
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const handleShortcut = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (isOpen) onClose();
+        else onOpen();
+      }
     };
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
-    }
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [isOpen, onOpen, onClose]);
+
+  // Freeze the page behind the menu. Layout effect so the trigger is captured
+  // before the panel's own effect moves focus inside.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
+    lockScroll();
+    return unlockScroll;
+  }, [isOpen]);
+
+  // Hand focus back to the trigger. This must be a passive effect: during the commit
+  // React restores focus to the still-mounted (exiting) menu link, which would undo it.
+  useEffect(() => {
+    if (!isOpen) return;
     return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', handleKeyDown);
+      returnFocusRef.current?.focus({ preventScroll: true });
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-md"
-          />
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence>
+        {isOpen && (
+          <div key="quick-menu" className="fixed inset-0 z-50">
+            <motion.div
+              className="menu-backdrop absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: EASE }}
+              onClick={onClose}
+            />
+            <div className="relative h-full max-w-7xl mx-auto px-3 sm:px-8 py-3 sm:py-4 flex items-start pointer-events-none">
+              <MenuPanel onClose={onClose} />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+    </MotionConfig>
+  );
+}
 
-          {/* Modal Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 16 }}
-            transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-            className="relative z-10 w-full max-w-lg"
-          >
-            <GlassCard className="p-6 sm:p-8 bg-white/85 dark:bg-neutral-900/85 shadow-2xl border-white/60 dark:border-white/20">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-6 border-b border-black/5 dark:border-white/10">
-                <div>
-                  <span className="text-xs uppercase tracking-wider text-[var(--text-3)] font-medium">Quick Directory</span>
-                  <h3 className="text-xl font-semibold text-[var(--text)] tracking-tight">Navigation</h3>
-                </div>
-                <IconButton size="md" onClick={onClose} tooltip="Close modal">
-                  <X className="w-4 h-4 stroke-[1.75]" />
-                </IconButton>
-              </div>
+function MenuPanel({ onClose }: { onClose: () => void }) {
+  const { author, socials, quickLinks } = content;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const copyTimer = useRef<number | undefined>(undefined);
+  const [activeId] = useState(() => getActiveSection(sectionIds));
+  const [copied, setCopied] = useState(false);
 
-              {/* Navigation Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-6">
-                {content.quickLinks.map((item) => (
-                  <a
-                    key={item.title}
-                    href={item.href}
-                    onClick={onClose}
-                    className="flex items-center justify-between p-3.5 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.07] dark:hover:bg-white/[0.08] transition-all duration-300 tap-apple group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-[var(--text-2)] group-hover:text-[var(--text)] transition-colors">
-                        {iconMap[item.icon] || <Layers className="w-5 h-5 stroke-[1.5]" />}
-                      </span>
-                      <span className="text-sm font-medium text-[var(--text)]">
-                        {item.title}
-                      </span>
-                    </div>
-                    {item.badge && (
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-orange-100 dark:bg-indigo-950/60 text-orange-700 dark:text-indigo-300 border border-orange-200/50 dark:border-indigo-800/40">
-                        {item.badge}
-                      </span>
-                    )}
-                  </a>
-                ))}
-              </div>
+  useEffect(() => {
+    const target = linkRefs.current[Math.max(0, sectionIds.indexOf(activeId ?? ''))];
+    target?.focus({ preventScroll: true });
+    return () => window.clearTimeout(copyTimer.current);
+  }, [activeId]);
 
-              {/* Footer info */}
-              <div className="pt-4 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs text-[var(--text-2)]">
-                <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  {content.author.location}
-                </span>
-                <a
-                  href={`mailto:${content.author.email}`}
-                  className="font-medium text-[var(--text)] hover:underline inline-flex items-center gap-1"
-                >
-                  Contact directly <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </GlassCard>
-          </motion.div>
+  const navigate = (href: string) => {
+    onClose();
+    // Release the scroll lock now so Lenis accepts the programmatic scroll
+    unlockScroll();
+    scrollToTarget(href);
+  };
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText(author.email).then(() => {
+      setCopied(true);
+      window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onClose();
+      return;
+    }
+
+    // Keep Tab inside the dialog
+    if (e.key === 'Tab' && panelRef.current) {
+      const focusables = Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    // Number keys jump straight to a section
+    const index = Number(e.key) - 1;
+    if (Number.isInteger(index) && index >= 0 && index < quickLinks.length) {
+      e.preventDefault();
+      navigate(quickLinks[index].href);
+      return;
+    }
+
+    // Arrow keys move between sections
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const links = linkRefs.current.filter(Boolean) as HTMLAnchorElement[];
+      const current = links.indexOf(document.activeElement as HTMLAnchorElement);
+      const step = e.key === 'ArrowDown' ? 1 : -1;
+      const next = current === -1 ? 0 : (current + step + links.length) % links.length;
+      links[next]?.focus();
+    }
+  };
+
+  return (
+    <motion.div
+      ref={panelRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quick-menu-title"
+      onKeyDown={handleKeyDown}
+      data-lenis-prevent
+      className="menu-panel pointer-events-auto w-full sm:max-w-[880px] max-h-full overflow-y-auto overscroll-contain"
+      style={{ transformOrigin: 'top left' }}
+      initial={{ opacity: 0, scale: 0.9, y: -12, filter: 'blur(10px)' }}
+      animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+      exit={{ opacity: 0, scale: 0.96, y: -8, filter: 'blur(6px)', transition: { duration: 0.22, ease: EASE } }}
+      transition={{ type: 'spring', stiffness: 380, damping: 34, mass: 0.9 }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 px-4 sm:px-6 pt-4 pb-4">
+        <div className="flex items-center gap-3.5">
+          <button type="button" onClick={onClose} aria-label="Close menu" className="menu-icon-btn w-11 h-11">
+            <X className="w-4 h-4 stroke-[1.75]" />
+          </button>
+          <div>
+            <p className="text-[10.5px] uppercase tracking-[0.16em] font-semibold text-[var(--text-3)]">Quick directory</p>
+            <h2 id="quick-menu-title" className="font-serif italic text-2xl leading-tight text-[var(--text)]">
+              Where to next?
+            </h2>
+          </div>
         </div>
-      )}
-    </AnimatePresence>
+        <span className="hidden sm:inline-flex">
+          <kbd className="menu-kbd">Esc</kbd>
+        </span>
+      </div>
+
+      <div className="grid sm:grid-cols-[1.4fr_1fr] border-t menu-divider">
+        {/* Section links */}
+        <nav aria-label="Sections" className="p-2 sm:p-3">
+          <ul>
+            {quickLinks.map((link, i) => {
+              const isActive = activeId === link.href.slice(1);
+              return (
+                <motion.li
+                  key={link.href}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06 + i * 0.045, duration: 0.5, ease: EASE }}
+                >
+                  <a
+                    ref={(el) => {
+                      linkRefs.current[i] = el;
+                    }}
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(link.href);
+                    }}
+                    aria-current={isActive ? 'location' : undefined}
+                    className="menu-link group"
+                  >
+                    <span className="menu-index font-doto" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="flex items-center gap-2.5">
+                        <span className="menu-title">{link.title}</span>
+                        <span className="menu-dot" aria-hidden="true" />
+                        {link.badge && <span className="menu-badge">{link.badge}</span>}
+                      </span>
+                      {link.description && <span className="menu-desc">{link.description}</span>}
+                    </span>
+                    <ArrowRight className="menu-arrow w-5 h-5 stroke-[1.5]" aria-hidden="true" />
+                  </a>
+                </motion.li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Profile and contact */}
+        <motion.aside
+          className="flex flex-col gap-5 p-5 sm:p-6 border-t sm:border-t-0 sm:border-l menu-divider"
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.16, duration: 0.55, ease: EASE }}
+        >
+          <div className="flex items-center gap-3.5">
+            <img src={author.avatar} alt="" className="w-12 h-12 rounded-full object-cover ring-1 ring-black/5" />
+            <div className="min-w-0">
+              <p className="text-[15px] font-semibold text-[var(--text)] truncate">{author.name}</p>
+              <p className="text-xs text-[var(--text-2)] truncate">{author.role}</p>
+            </div>
+          </div>
+
+          {author.availableForWork && (
+            <div className="menu-status">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span>{author.statusText}</span>
+            </div>
+          )}
+
+          <div>
+            <p className="menu-label">Email</p>
+            <div className="flex items-center gap-2">
+              <a href={`mailto:${author.email}`} className="menu-email truncate">
+                {author.email}
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                aria-label={copied ? 'Email copied' : 'Copy email address'}
+                className="menu-icon-btn w-8 h-8 shrink-0"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p className="menu-label">Elsewhere</p>
+            <div className="flex items-center gap-2">
+              {socials.filter((social) => social.url && social.url !== '#').map((social) => (
+                <a
+                  key={social.platform}
+                  href={social.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.platform}
+                  title={social.platform}
+                  className="menu-icon-btn w-10 h-10"
+                >
+                  <SocialIcon platform={social.platform} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <p className="mt-auto text-xs text-[var(--text-3)]">
+            {author.location} · <LocalTime /> IST
+          </p>
+        </motion.aside>
+      </div>
+
+      {/* Keyboard hints */}
+      <div className="hidden sm:flex items-center justify-between px-6 py-3 border-t menu-divider text-[11px] text-[var(--text-3)]">
+        <span className="flex items-center gap-4">
+          <span className="flex items-center gap-1">
+            <kbd className="menu-kbd">↑</kbd>
+            <kbd className="menu-kbd">↓</kbd> move
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="menu-kbd">1</kbd>–<kbd className="menu-kbd">{quickLinks.length}</kbd> jump
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="menu-kbd">↵</kbd> open
+          </span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="menu-kbd">{SHORTCUT}</kbd> toggle menu
+        </span>
+      </div>
+    </motion.div>
   );
 }

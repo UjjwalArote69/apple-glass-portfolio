@@ -40,6 +40,17 @@ export function scrollToTarget(target: string | HTMLElement | number, { offset =
   onComplete?.();
 }
 
+// Freeze page scrolling behind overlays (Lenis ignores body overflow on its own)
+export function lockScroll() {
+  activeLenis?.stop();
+  document.body.style.overflow = 'hidden';
+}
+
+export function unlockScroll() {
+  document.body.style.overflow = '';
+  activeLenis?.start();
+}
+
 export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 

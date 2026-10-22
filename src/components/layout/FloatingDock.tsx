@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Layers, User, Briefcase, Mail } from 'lucide-react';
 import { scrollToTarget } from '../../hooks/useLenis';
+import { getActiveSection } from '../../utils/activeSection';
 
 interface DockItem {
   id: string;
@@ -19,9 +20,9 @@ const dockItems: DockItem[] = [
   { id: 'contact', label: 'Contact', icon: Mail, href: '#contact' },
 ];
 
+const sectionIds = dockItems.map((item) => item.id);
+
 const SHOW_AFTER = 120;
-// A section becomes active once its top crosses this fraction of the viewport
-const ACTIVE_LINE = 0.35;
 // Safety net in case a programmatic scroll never reports completion
 const NAV_LOCK_TIMEOUT = 2500;
 
@@ -59,25 +60,7 @@ export function FloatingDock() {
       // instead of flicking through every section in between
       if (navLockRef.current !== null) return;
 
-      const line = window.innerHeight * ACTIVE_LINE;
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-
-      let current = dockItems[0].id;
-      if (atBottom) {
-        current = dockItems[dockItems.length - 1].id;
-      } else {
-        let best = -Infinity;
-        for (const item of dockItems) {
-          const el = document.getElementById(item.id);
-          if (!el) continue;
-          const top = el.getBoundingClientRect().top;
-          if (top <= line && top > best) {
-            best = top;
-            current = item.id;
-          }
-        }
-      }
-      setActiveSection(current);
+      setActiveSection(getActiveSection(sectionIds) ?? dockItems[0].id);
     };
 
     const onScroll = () => {

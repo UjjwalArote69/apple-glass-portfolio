@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import { GlassPill } from '../ui/GlassPill';
 import { IconButton } from '../ui/IconButton';
 import { content } from '../../content';
 import { scrollToTarget } from '../../hooks/useLenis';
@@ -38,19 +37,6 @@ export function HeroSection() {
               {headline.lead}
             </span>
           </h1>
-
-          {/* Filter / discipline pills row */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {headline.filterPills.map((pill) => (
-              <GlassPill
-                key={pill}
-                size="sm"
-                className="text-xs bg-white/40 dark:bg-white/5 border-white/60 dark:border-white/10"
-              >
-                {pill}
-              </GlassPill>
-            ))}
-          </div>
 
           {/* CTA actions */}
           <div className="flex items-center gap-4 pt-4">

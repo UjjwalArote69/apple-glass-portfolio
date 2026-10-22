@@ -1,113 +1,118 @@
-import { useRef } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
-import { Briefcase, MapPin, CheckCircle2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { content } from '../../content';
+import type { ExperienceItem, Project } from '../../types/portfolio';
 import { GlassCard } from '../ui/GlassCard';
 
-export function ExperienceTimeline() {
+interface ExperienceTimelineProps {
+  onSelectProject: (project: Project) => void;
+}
+
+const EASE = [0.32, 0.72, 0, 1] as const;
+
+export function ExperienceTimeline({ onSelectProject }: ExperienceTimelineProps) {
   const { experience } = content;
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start center', 'end center'],
-  });
-
-  const progressSpring = useSpring(scrollYProgress, {
-    stiffness: 300,
-    damping: 30,
-  });
+  const startYear = Math.min(...experience.map((item) => parseInt(item.period, 10)));
 
   return (
-    <section
-      id="experience"
-      ref={containerRef}
-      className="px-4 sm:px-8 py-24 max-w-5xl mx-auto relative z-10"
-    >
-      {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto mb-16">
+    <section id="experience" className="px-4 sm:px-8 py-24 max-w-7xl mx-auto relative z-10">
+      <div className="mb-10">
         <span className="text-xs uppercase tracking-widest text-[var(--text-3)] font-semibold block mb-2">
           04 // Trajectory
         </span>
         <h2 className="text-3xl sm:text-5xl font-light text-[var(--text)] tracking-tight">
-          Experience <span className="font-semibold text-neutral-950 dark:text-white">& Leadership</span>
+          Experience <span className="text-[var(--text-3)]">{startYear}–now</span>
         </h2>
-        <p className="text-sm sm:text-base text-[var(--text-2)] mt-3 font-normal">
-          Staff design engineering and creative technology across pioneering studios and platforms.
+        <p className="mt-3 text-[15px] text-[var(--text-2)] max-w-md">
+          Where I&apos;ve studied and worked, and what I built along the way.
         </p>
       </div>
 
-      {/* Vertical Timeline Container */}
-      <div className="relative pl-6 sm:pl-10 space-y-12">
-        {/* Progressing Track Line */}
-        <div className="absolute left-2.5 sm:left-4 top-4 bottom-4 w-[2px] bg-black/10 dark:bg-white/10" />
-
-        {/* Dynamic Glowing Progress Line */}
-        <motion.div
-          style={{ scaleY: progressSpring, transformOrigin: 'top' }}
-          className="absolute left-2.5 sm:left-4 top-4 bottom-4 w-[2px] bg-gradient-to-b from-orange-400 via-purple-400 to-indigo-500 shadow-[0_0_12px_rgba(255,180,140,0.8)]"
-        />
-
-        {/* Timeline Cards */}
-        {experience.map((exp, idx) => (
-          <motion.div
-            key={exp.id}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.32, 0.72, 0, 1] }}
-            className="relative"
-          >
-            {/* Glowing Orb Marker */}
-            <div className="absolute -left-6 sm:-left-10 top-6 -translate-x-1/2 w-5 h-5 rounded-full p-1 bg-white/90 dark:bg-neutral-800 shadow-md border border-white dark:border-white/20 flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-orange-400 to-pink-500 shadow-sm" />
-            </div>
-
-            {/* Slim Glass Card */}
-            <GlassCard className="p-6 sm:p-8 backdrop-blur-2xl bg-white/60 dark:bg-neutral-900/40 border-white/70 dark:border-white/10 hover:shadow-xl transition-all">
-              {/* Header row: Company, Role, Period */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-black/5 dark:border-white/10">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-orange-500" />
-                    <h3 className="text-xl font-semibold text-[var(--text)] tracking-tight">
-                      {exp.company}
-                    </h3>
-                  </div>
-                  <span className="text-sm font-medium text-[var(--text-2)] mt-0.5 block">
-                    {exp.role}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3 text-xs text-[var(--text-2)] font-medium">
-                  <span className="px-3 py-1 rounded-full bg-black/[0.04] dark:bg-white/[0.06]">
-                    {exp.period}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5" />
-                    {exp.location}
-                  </span>
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className="text-sm sm:text-base text-[var(--text-2)] font-normal mt-4 leading-relaxed">
-                {exp.description}
-              </p>
-
-              {/* Highlights */}
-              <ul className="mt-4 space-y-2">
-                {exp.highlights.map((highlight, hIdx) => (
-                  <li key={hIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[var(--text-2)]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </GlassCard>
-          </motion.div>
-        ))}
-      </div>
+      <GlassCard className="p-0 about-card">
+        <ol className="py-2 sm:py-4">
+          {experience.map((item) => (
+            <TimelineEntry key={item.id} item={item} onSelectProject={onSelectProject} />
+          ))}
+        </ol>
+      </GlassCard>
     </section>
+  );
+}
+
+interface TimelineEntryProps {
+  item: ExperienceItem;
+  onSelectProject: (project: Project) => void;
+}
+
+function TimelineEntry({ item, onSelectProject }: TimelineEntryProps) {
+  const ref = useRef<HTMLLIElement>(null);
+
+  // The rail fills as this entry passes the upper part of the viewport, and its node lights up once reached
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 65%', 'end 65%'] });
+  const fill = useSpring(scrollYProgress, { stiffness: 220, damping: 32, restDelta: 0.001 });
+  const [reached, setReached] = useState(false);
+  useMotionValueEvent(scrollYProgress, 'change', (value) => setReached(value > 0));
+
+  const related = (item.projects ?? [])
+    .map((id) => content.projects.find((project) => project.id === id))
+    .filter((project): project is Project => Boolean(project));
+  const current = /present/i.test(item.period);
+
+  return (
+    <li ref={ref} className="tl-entry" data-reached={reached} data-current={current}>
+      <div className="tl-when">
+        <span className="tl-period">{item.period.replace(/present/i, 'Now')}</span>
+        <span className="tl-kind">{item.kind}</span>
+        <span className="tl-place">{item.location}</span>
+      </div>
+
+      <div className="tl-rail" aria-hidden="true">
+        <span className="tl-track" />
+        <motion.span className="tl-fill" style={{ scaleY: fill }} />
+        <span className="tl-node" />
+      </div>
+
+      <motion.div
+        className="tl-body"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.7, ease: EASE }}
+      >
+        <h3 className="tl-org">{item.company}</h3>
+        <p className="tl-role">{item.role}</p>
+        <p className="tl-desc">{item.description}</p>
+
+        {item.highlights.length > 0 && (
+          <ul className="tl-points">
+            {item.highlights.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        )}
+
+        {related.length > 0 && (
+          <div className="tl-projects">
+            <p className="menu-label">Projects</p>
+            <div className="flex flex-wrap gap-2">
+              {related.map((project) => (
+                <button
+                  key={project.id}
+                  type="button"
+                  onClick={() => onSelectProject(project)}
+                  className="tl-chip group"
+                  data-cursor="Open"
+                >
+                  <img src={project.image} alt="" className="tl-chip-thumb" loading="lazy" />
+                  <span>{project.title.split(' — ')[0]}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 stroke-[1.75] opacity-50 transition-opacity group-hover:opacity-100" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </li>
   );
 }

@@ -37,7 +37,9 @@ async function captureAll() {
     try {
       console.log(`Capturing ${p.id} from ${p.url}...`);
       await page.goto(p.url, { waitUntil: 'networkidle2', timeout: 15000 });
-      await new Promise(r => setTimeout(r, 1500));
+      // Several sites play intro loaders and headline animations; 1.5s caught them mid-way
+      await page.evaluate(() => document.fonts.ready);
+      await new Promise(r => setTimeout(r, 8000));
       await page.screenshot({ path: outPath, type: 'jpeg', quality: 85 });
       console.log(`Saved ${outPath}`);
     } catch (err) {
