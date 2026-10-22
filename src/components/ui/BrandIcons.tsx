@@ -29,6 +29,7 @@ export function SocialIcon({ platform }: { platform: string }) {
   switch (platform.toLowerCase()) {
     case 'github':
       return <GithubIcon />;
+    case 'x':
     case 'x / twitter':
     case 'twitter':
       return <XIcon />;
