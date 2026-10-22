@@ -61,7 +61,6 @@ export interface PortfolioContent {
     role: string;
     tagline: string;
     location: string;
-    avatar: string;
     availableForWork: boolean;
     statusText: string;
     email: string;

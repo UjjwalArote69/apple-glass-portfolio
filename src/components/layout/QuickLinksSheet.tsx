@@ -231,12 +231,9 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.16, duration: 0.55, ease: EASE }}
         >
-          <div className="flex items-center gap-3.5">
-            <img src={author.avatar} alt="" className="w-12 h-12 rounded-full object-cover ring-1 ring-black/5" />
-            <div className="min-w-0">
-              <p className="text-[15px] font-semibold text-[var(--text)] truncate">{author.name}</p>
-              <p className="text-xs text-[var(--text-2)] truncate">{author.role}</p>
-            </div>
+          <div className="min-w-0">
+            <p className="text-[15px] font-semibold text-[var(--text)] truncate">{author.name}</p>
+            <p className="text-xs text-[var(--text-2)] truncate">{author.role}</p>
           </div>
 
           {author.availableForWork && (

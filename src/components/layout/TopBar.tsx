@@ -2,7 +2,6 @@ import { LayoutGrid, Sun, Moon } from 'lucide-react';
 import { GlassPill } from '../ui/GlassPill';
 import { IconButton } from '../ui/IconButton';
 import type { Theme } from '../../hooks/useTheme';
-import { content } from '../../content';
 
 interface TopBarProps {
   theme: Theme;
@@ -12,8 +11,6 @@ interface TopBarProps {
 }
 
 export function TopBar({ theme, isQuickLinksOpen, onToggleTheme, onOpenQuickLinks }: TopBarProps) {
-  const { author } = content;
-
   return (
     <header className="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 py-4 pointer-events-none transition-all duration-300">
       <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
@@ -61,17 +58,6 @@ export function TopBar({ theme, isQuickLinksOpen, onToggleTheme, onOpenQuickLink
               </>
             )}
           </button>
-
-          {/* Avatar button */}
-          <div className="relative group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full p-[2px] glass-pill overflow-hidden shadow-sm">
-              <img
-                src={author.avatar}
-                alt={author.name}
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </header>
