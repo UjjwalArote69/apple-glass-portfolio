@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
-import { X, ArrowRight, Copy, Check } from 'lucide-react';
+import { X, ArrowRight, ArrowUpRight, Copy, Check } from 'lucide-react';
 import { content } from '../../content';
 import { lockScroll, unlockScroll, scrollToTarget } from '../../hooks/useLenis';
 import { getActiveSection } from '../../utils/activeSection';
@@ -268,21 +268,22 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
 
           <div>
             <p className="menu-label">Elsewhere</p>
-            <div className="flex items-center gap-2">
+            <ul className="-mx-2">
               {socials.filter((social) => social.url && social.url !== '#').map((social) => (
-                <a
-                  key={social.platform}
-                  href={social.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={social.platform}
-                  title={social.platform}
-                  className="menu-icon-btn w-10 h-10"
-                >
-                  <SocialIcon platform={social.platform} />
-                </a>
+                <li key={social.platform}>
+                  <a href={social.url} target="_blank" rel="noreferrer" className="contact-social group">
+                    <span className="contact-social-icon">
+                      <SocialIcon platform={social.platform} />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-medium text-[var(--text)]">{social.platform}</span>
+                      <span className="block text-[12.5px] text-[var(--text-2)] truncate">{social.handle}</span>
+                    </span>
+                    <ArrowUpRight className="w-4 h-4 text-[var(--text-3)] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
           <p className="mt-auto text-xs text-[var(--text-3)]">
